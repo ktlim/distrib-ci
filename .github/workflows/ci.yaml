@@ -30,8 +30,9 @@ jobs:
           else
               ./bin/deploy -v "$conda_ref"
           fi
+          . bin/envconfig "lsst-scipipe-$conda_ref"
           args=()
-          foreach ref in "${{ github.event.inputs.refs }}"; do
+          for ref in "${{ github.event.inputs.refs }}"; do
               args+=(-r "$ref")
           done
           ./bin/rebuild ${args[@]} ${{ github.event.inputs.products }}

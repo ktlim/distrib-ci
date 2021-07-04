@@ -32,6 +32,11 @@ jobs:
           else
               ./bin/deploy -v "$conda_ref"
           fi
+      - name: Check space
+        run: |
+          df -h
+          du -sh .
+          apt list
       - name: Run rebuild
         working-directory: ./lsstsw
         run: |

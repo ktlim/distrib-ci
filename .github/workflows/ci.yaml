@@ -21,10 +21,18 @@ jobs:
   lsstsw:
     runs-on: ubuntu-latest
     steps:
+      - name: Check space
+        run: |
+          df -h .
+          du -h /mnt
+          sudo mkdir /lsstsw
+          sudo chown $USER /lsstsw
+          cd /lsstsw
+          df -h .
       - name: Clone lsstsw
-        run: git clone https://github.com/lsst/lsstsw
+        run: git clone https://github.com/lsst/lsstsw /lsstsw
       - name: Deploy environment
-        working-directory: ./lsstsw
+        working-directory: /lsstsw
         run: |
           conda_ref="${{ github.event.inputs.conda_env }}"
           if [ "$conda_ref" = [dsvw]* ]; then
@@ -32,13 +40,8 @@ jobs:
           else
               ./bin/deploy -v "$conda_ref"
           fi
-      - name: Check space
-        run: |
-          df -h
-          du -sh .
-          apt list
       - name: Run rebuild
-        working-directory: ./lsstsw
+        working-directory: /lsstsw
         run: |
           . bin/envconfig "lsst-scipipe-$conda_ref"
           args=()

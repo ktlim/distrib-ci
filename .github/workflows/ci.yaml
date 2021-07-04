@@ -23,6 +23,7 @@ jobs:
     steps:
       - run: |
           git clone https://github.com/lsst/lsstsw
+          cd lsstsw
           conda_ref="${{ github.event.inputs.conda_env }}"
           if [ "$conda_ref" = [dsvw]* ]; then
               ./bin/deploy -x "$conda_ref"

@@ -37,7 +37,10 @@ jobs:
         run: |
           . bin/envconfig "lsst-scipipe-$conda_ref"
           args=()
-          for ref in "${{ github.event.inputs.refs }}"; do
-              args+=(-r "$ref")
-          done
+          refs="${{ github.event.inputs.refs }}"
+          if [ -n "$refs" ]; then
+              for ref in "$refs"; do
+                  args+=(-r "$ref")
+              done
+          fi
           ./bin/rebuild ${args[@]} ${{ github.event.inputs.products }}

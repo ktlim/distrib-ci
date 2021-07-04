@@ -1,0 +1,36 @@
+name: "Science Pipelines CI"
+on:
+  workflow_dispatch:
+    inputs:
+      refs:
+        description: >
+          Whitespace delimited list of refs to build.
+          'master' or branch from repos.yaml is implicitly appended;
+          do not specify explicitly.
+        required: false
+      products:
+        description: "Whitespace delimited list of EUPS products to build"
+        required: true
+        default: "lsst_distrib lsst_ci"
+      conda_env:
+        description: "Conda environment, either rubin-env version or existing eups tag"
+        required: true
+        default: "0.6.0"
+
+jobs:
+  lsstsw:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          git clone https://github.com/lsst/lsstsw
+          conda_ref="${{ github.event.inputs.conda_env }}"
+          if [ "$conda_ref" = [dsvw]* ]; then
+              ./bin/deploy -x "$conda_ref"
+          else
+              ./bin/deploy -v "$conda_ref"
+          fi
+          args=()
+          foreach ref in "${{ github.event.inputs.refs }}"; do
+              args+=(-r "$ref")
+          done
+          ./bin/rebuild ${args[@]} ${{ github.event.inputs.products }}

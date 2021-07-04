@@ -21,15 +21,20 @@ jobs:
   lsstsw:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          git clone https://github.com/lsst/lsstsw
-          cd lsstsw
+      - name: Clone lsstsw
+        run: git clone https://github.com/lsst/lsstsw
+      - name: Deploy environment
+        working-directory: ./lsstsw
+        run: |
           conda_ref="${{ github.event.inputs.conda_env }}"
           if [ "$conda_ref" = [dsvw]* ]; then
               ./bin/deploy -x "$conda_ref"
           else
               ./bin/deploy -v "$conda_ref"
           fi
+      - name: Run rebuild
+        working-directory: ./lsstsw
+        run: |
           . bin/envconfig "lsst-scipipe-$conda_ref"
           args=()
           for ref in "${{ github.event.inputs.refs }}"; do

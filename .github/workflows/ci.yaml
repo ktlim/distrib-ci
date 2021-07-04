@@ -24,7 +24,7 @@ jobs:
       - name: Check space
         run: |
           df -h .
-          du -h /mnt
+          du -h --exclude='*lost+found' -d 2 /mnt
           sudo mkdir /lsstsw
           sudo chown $USER /lsstsw
           cd /lsstsw
